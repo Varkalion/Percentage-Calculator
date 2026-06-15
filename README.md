@@ -6,6 +6,10 @@ Instant Online Percentage Change Calculator
 
 A sleek, lightweight, and fast web-based tool designed to calculate the percentage difference between two values and apply percentage adjustments to any base number instantly.
 
+
+![description](https://github.com/Varkalion/Percentage-Calculator/blob/main/screenshot/ssen.png?raw=true)
+
+
 Key Features:
 
     Real-time Calculation: Results appear instantly as you type.
@@ -30,6 +34,9 @@ Simply enter your initial and final values. The tool automatically determines th
 محاسبه‌گر آنلاین و آنی درصد تغییرات
 
 یک ابزار تحت وب ساده، سریع و کاربردی برای محاسبه درصد افزایش یا کاهش بین دو عدد و اعمال درصد بر روی مقادیر دلخواه. این پروژه با تمرکز بر سرعت کاربری و طراحی مدرن ساخته شده است.
+
+![description](https://github.com/Varkalion/Percentage-Calculator/blob/main/screenshot/scfa.png?raw=true)
+
 
 ویژگی‌های کلیدی:
 
