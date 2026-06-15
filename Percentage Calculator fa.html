@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محاسبه‌گر آنلاین و آنی درصد تغییرات</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-RD-FD-font-face.css" rel="stylesheet" type="text/css" />
+    
+	<style>
+    /* اعمال فونت وزیر با اعداد فارسی روی تمام المان‌های صفحه (پشتیبانی از لود هوشمند بولد آنلاین) */
+    body, input, button, span, div { 
+        font-family: 'Vazirmatn RD FD', sans-serif !important; 
+    }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4 md:p-6 min-h-screen flex flex-col items-center justify-center">
+
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-8 relative">
+        
+        <button onclick="clearAll()" class="absolute top-6 left-6 text-xs bg-gray-100 hover:bg-gray-200 text-gray-500 font-medium py-1.5 px-3 rounded-lg transition-all">
+            🗑️ پاک‌سازی فرم
+        </button>
+
+        <div class="text-center">
+            <h1 class="text-2xl md:text-3xl font-black text-indigo-600 mb-2">🧮 محاسبه‌گر درصد تغییرات</h1>
+        </div>
+
+        <div class="bg-indigo-50/50 p-5 rounded-xl border border-indigo-100 space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-bold text-indigo-900">محاسبه درصد افزایش یا کاهش بین دو مقدار</h2>
+                <button onclick="swapValues()" class="text-indigo-600 hover:bg-indigo-100 px-2 py-1 rounded-lg transition-all text-xs font-bold flex items-center gap-1">
+                    ⇄ جابه‌جایی مقادیر
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">مقدار اولیه (قدیمی):</label>
+					<div class="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500">
+                        <input type="number" id="v1" oninput="calculateChange()" placeholder="مثلاً ۱۰۰" class="w-full p-3 text-right focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none font-medium" dir="rtl">
+                        <div class="flex flex-col border-r border-gray-300 w-10 shrink-0">
+                            <button onclick="stepUp('v1', calculateChange)" class="h-6 bg-gray-50 hover:bg-gray-100 border-b border-gray-200 text-slate-500 text-xs font-bold transition-all">▲</button>
+                            <button onclick="stepDown('v1', calculateChange)" class="h-6 bg-gray-50 hover:bg-gray-100 text-slate-500 text-xs font-bold transition-all">▼</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">مقدار ثانویه (جدید):</label>
+					<div class="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500">
+                        <input type="number" id="v2" oninput="calculateChange()" placeholder="مثلاً ۱۵۰" class="w-full p-3 text-right focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none font-medium" dir="rtl">
+                        <div class="flex flex-col border-r border-gray-300 w-10 shrink-0">
+                            <button onclick="stepUp('v2', calculateChange)" class="h-6 bg-gray-50 hover:bg-gray-100 border-b border-gray-200 text-slate-500 text-xs font-bold transition-all">▲</button>
+                            <button onclick="stepDown('v2', calculateChange)" class="h-6 bg-gray-50 hover:bg-gray-100 text-slate-500 text-xs font-bold transition-all">▼</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="result1" class="hidden p-4 rounded-xl font-bold transition-all duration-300"></div>
+        </div>
+
+        <hr class="border-gray-200">
+
+        <div class="bg-emerald-50/50 p-5 rounded-xl border border-emerald-100 space-y-4">
+            <h2 class="text-lg font-bold text-emerald-900">اعمال درصد افزایش یا کاهش روی یک عدد</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">مقدار اصلی:</label>
+					<div class="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500">
+                        <input type="number" id="baseValue" oninput="applyPercentage()" placeholder="مثلاً ۲۰۰" class="w-full p-3 text-right focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none font-medium" dir="rtl">
+                        <div class="flex flex-col border-r border-gray-300 w-10 shrink-0">
+                            <button onclick="stepUp('baseValue', applyPercentage)" class="h-6 bg-gray-50 hover:bg-gray-100 border-b border-gray-200 text-slate-500 text-xs font-bold transition-all">▲</button>
+                            <button onclick="stepDown('baseValue', applyPercentage)" class="h-6 bg-gray-50 hover:bg-gray-100 text-slate-500 text-xs font-bold transition-all">▼</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">میزان درصد (٪):</label>
+                    <div class="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500">
+                        <input type="number" id="percentage" oninput="applyPercentage()" placeholder="مثلاً ۲۰" class="w-full p-3 text-right focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none font-medium" dir="rtl">
+                        <div class="flex flex-col border-r border-gray-300 w-10 shrink-0">
+                            <button onclick="stepUp('percentage', applyPercentage)" class="h-6 bg-gray-50 hover:bg-gray-100 border-b border-gray-200 text-slate-500 text-xs font-bold transition-all">▲</button>
+                            <button onclick="stepDown('percentage', applyPercentage)" class="h-6 bg-gray-50 hover:bg-gray-100 text-slate-500 text-xs font-bold transition-all">▼</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="result2" class="hidden p-4 rounded-xl font-semibold transition-all duration-300"></div>
+        </div>
+    </div>
+
+    <script>
+        // توابع عمومی افزایش و کاهش با ساختار عمودی
+        function stepUp(id, callback) {
+            const input = document.getElementById(id);
+            input.value = (parseFloat(input.value) || 0) + 1;
+            callback(); 
+        }
+
+        function stepDown(id, callback) {
+            const input = document.getElementById(id);
+            input.value = (parseFloat(input.value) || 0) - 1;
+            callback(); 
+        }
+
+        function calculateChange() {
+            const v1 = parseFloat(document.getElementById('v1').value);
+            const v2 = parseFloat(document.getElementById('v2').value);
+            const resultDiv = document.getElementById('result1');
+
+            if (document.getElementById('v1').value === '' || document.getElementById('v2').value === '') {
+                resultDiv.classList.add('hidden');
+                return;
+            }
+
+            if (!v1) {
+                showResult(resultDiv, '<div class="text-center text-base text-red-800">مقدار اولیه نباید صفر باشد.</div>', 'bg-red-100 border border-red-200');
+                return;
+            }
+
+            const diff = v2 - v1;
+            const percentChange = ((diff / Math.abs(v1)) * 100).toFixed(2);
+            const formattedDiff = Math.abs(diff).toLocaleString('fa-IR');
+
+            if (diff > 0) {
+                const html = `
+                    <div class="flex items-center justify-between px-4">
+                        <span class="text-sm font-medium text-green-700">میزان تغییرات:</span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-base font-medium text-green-500">(${formattedDiff}+)</span>
+                            <span class="text-xl font-black text-green-600">٪${percentChange}+</span>
+                        </div>
+                    </div>
+                `;
+                showResult(resultDiv, html, 'bg-green-50 border border-green-200');
+            } else if (diff < 0) {
+                const html = `
+                    <div class="flex items-center justify-between px-4">
+                        <span class="text-sm font-medium text-red-700">میزان تغییرات:</span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-base font-medium text-red-400">(${formattedDiff}-)</span>
+                            <span class="text-xl font-black text-red-600">٪${Math.abs(percentChange)}-</span>
+                        </div>
+                    </div>
+                `;
+                showResult(resultDiv, html, 'bg-red-50 border border-red-200');
+            } else {
+                const html = `
+                    <div class="flex items-center justify-between px-4">
+                        <span class="text-sm font-medium text-gray-600">میزان تغییرات:</span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-base font-medium text-gray-400">(۰)</span>
+                            <span class="text-2xl font-black text-gray-600">٪۰.۰۰</span>
+                        </div>
+                    </div>
+                `;
+                showResult(resultDiv, html, 'bg-gray-100 border border-gray-200');
+            }
+        }
+
+        function applyPercentage() {
+            const base = parseFloat(document.getElementById('baseValue').value);
+            const percent = parseFloat(document.getElementById('percentage').value);
+            const resultDiv = document.getElementById('result2');
+
+            if (document.getElementById('baseValue').value === '' || document.getElementById('percentage').value === '') {
+                resultDiv.classList.add('hidden');
+                return;
+            }
+
+            const amount = (base * (percent / 100));
+            const increaseResult = (base + amount).toLocaleString('fa-IR');
+            const decreaseResult = (base - amount).toLocaleString('fa-IR');
+            const formattedAmount = amount.toLocaleString('fa-IR');
+
+            const textResult = `
+                <div class="space-y-3 px-2">
+                    <div class="flex justify-between items-center">
+                        <span>➕ در صورت افزایش ${percent}٪:</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-base text-emerald-500 font-normal">(${formattedAmount}+)</span>
+                            <span class="font-black text-xl text-emerald-700">${increaseResult}</span>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-emerald-200 flex justify-between items-center">
+                        <span>➖ در صورت کاهش ${percent}٪:</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-base text-red-400 font-normal">(${formattedAmount}-)</span>
+                            <span class="font-black text-xl text-red-700">${decreaseResult}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showResult(resultDiv, textResult, 'bg-emerald-100/60 text-gray-800 text-right');
+        }
+
+        function swapValues() {
+            const v1Input = document.getElementById('v1');
+            const v2Input = document.getElementById('v2');
+            const temp = v1Input.value;
+            v1Input.value = v2Input.value;
+            v2Input.value = temp;
+            calculateChange();
+        }
+
+        function clearAll() {
+            document.getElementById('v1').value = '';
+            document.getElementById('v2').value = '';
+            document.getElementById('baseValue').value = '';
+            document.getElementById('percentage').value = '';
+            document.getElementById('result1').classList.add('hidden');
+            document.getElementById('result2').classList.add('hidden');
+        }
+
+        function showResult(element, htmlContent, classes) {
+            element.className = `p-4 rounded-xl font-semibold text-base md:text-lg ${classes}`;
+            element.innerHTML = htmlContent;
+            element.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
